@@ -1,0 +1,75 @@
+package com.example.lib;
+
+/**
+ ** Java Program to Implement Kosaraju Algorithm
+ **/
+
+import java.util.*;
+
+/** class Kosaraju **/
+public class Kosaraju
+{
+    Stack<Integer> s = new Stack<Integer>();
+    /** DFS function, graph is our edges, v is the number of vertice, and comp is the list of vertices we visited</integer>**/
+    public void DFS(List<Integer>[] graph, int v, boolean[] visited, List<Integer> comp)
+    {
+        visited[v] = true;
+        for (int i = 0; i < graph[v].size(); i++)
+            if (!visited[graph[v].get(i)])
+                DFS(graph, graph[v].get(i), visited, comp);
+        comp.add(v);
+        s.push(v);
+    }
+
+    /** function to get transpose of graph **/
+    public List<Integer>[] getTranspose(List<Integer>[] graph)
+    {
+        int V = graph.length;
+        List<Integer>[] g = new List[V];
+        for (int i = 0; i < V; i++)
+            g[i] = new ArrayList<Integer>();
+        for (int v = 0; v < V; v++)
+            for (int i = 0; i < graph[v].size(); i++)
+                g[graph[v].get(i)].add(v);
+        return g;
+    }
+    /** function to get all SCC **/
+    public List<List<Integer>> getSCC(List<Integer>[] graph)
+    {
+        int V = graph.length;
+        boolean[] visited = new boolean[V];
+        //List<Integer> order = fillOrder(graph, visited);
+        /** get transpose of the graph **/
+        List<Integer>[] reverseGraph = getTranspose(graph);
+        /** clear visited array **/
+        visited = new boolean[V];
+        /** reverse order or alternatively use a stack for order **/
+        //Collections.reverse(order);
+
+        /** get all scc **/
+        List<List<Integer>> SCComp = new ArrayList<>();
+        while (!s.empty())
+        {
+            int v = s.pop();
+
+            if (!visited[v])
+            {
+                List<Integer> comp = new ArrayList<>();
+                DFS(reverseGraph, v, visited, comp);
+                SCComp.add(comp);
+            }
+        }
+        return SCComp;
+    }
+    // check if any of scc contains variable X and not X
+    public boolean checker(List<List<Integer>> scc ){
+        for (int i = 0; i <= scc.size();i++){
+            for (int j = 0;j <= scc.get(i).size();j++) {
+                if (scc.get(i).get(j) == scc.get(i).get(j + scc.get(i).size())) {
+                    return false;
+                }
+            }
+        }
+        return true;}}
+
+
